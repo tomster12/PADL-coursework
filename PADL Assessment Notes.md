@@ -12,8 +12,8 @@ Submission in a zip `Yxxxx.zip`:
 
 - `padl.ipynb` with all code and explanations
 - `padl.pdf` as exported notebook
-- Exported weights from Q4
-- Script `predict_time.py` to run Q4 network
+- Exported weights from Q5\*
+- Script `predict_time.py` to run Q5\* network
 
 https://drive.google.com/drive/u/1/folders/1LaBLf2ECVTQUS4VS5lNnAaKbhF1pHPoB
 
@@ -91,10 +91,19 @@ Generalisation error on inputs outside of training data.
 Labels with $H\in {0..11}$, $M\in {0..59}$.
 
 Task is to predict time from images.
+
 - Performance = absolute difference in minutes
-- Input Bx3x448x448 in range (0,1)
-- Output Bx2 in ranges (0..11, 0..59)
+- Train performance = median absolute difference in minutes
+- Input Bx3x448x448 scaled to the range (0,1)
+- Output Bx2 in ranges (0..11, 0..59) for (hour, minute)
 - Exported weights < 20MiB
+
+Need to export weights to a file and make a `predict_time.py`.
+
+- `predict_time.py` needs a function `predict(images)`.
+- `predict` should load weights, pass input through network, then return output.
+
+Include training / validation code, as well as design discussion.
 
 **a. (5 marks)**
 Data Loader for clocks dataset.
