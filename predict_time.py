@@ -20,21 +20,24 @@ def onehot_to_label(onehot):
 
 
 # CNN for clock face classification
-# Output is 12 * 60 (720) classes for each minute of the day
+# - Input is (Bx1x224x224) greyscale images
+# - Output is (Bx720) classes for each minute of the day
 class ClockClassificationCNN(nn.Module):
     def __init__(self):
-        super(ClockClassificationCNN, self).__init__()
-        self.net = nn.Sequential(
+            # Bx1x224x224 -> Bx16x112x112
             nn.Conv2d(1, 16, kernel_size=3, stride=1, padding=1),
             nn.ReLU(),
             nn.MaxPool2d(kernel_size=2),
+            # Bx16x112x112 -> Bx32x56x56
             nn.Conv2d(16, 32, kernel_size=3, stride=1, padding=1),
             nn.ReLU(),
             nn.MaxPool2d(kernel_size=2),
+            # Bx32x56x56 -> Bx48x28x28
             nn.Conv2d(32, 48, kernel_size=3, stride=1, padding=1),
             nn.ReLU(),
             nn.MaxPool2d(kernel_size=2),
             nn.Flatten(),
+            # Bx(48x28x28) -> Bx(12x60)
             nn.Linear(48 * 28 * 28, 128),
             nn.ReLU(),
             nn.Linear(128, 12 * 60)
