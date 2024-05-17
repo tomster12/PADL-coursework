@@ -61,7 +61,7 @@ def predict(images):
     model = ClockClassificationCNN()
     model = model.to(device)
     model.load_state_dict(torch.load(
-        "clock_model.pt", map_location=torch.device(device)))
+        "clock_classifer_model.pt", map_location=torch.device(device)))
 
     # Predict time with model
     model.eval()
