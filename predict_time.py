@@ -24,6 +24,8 @@ def onehot_to_label(onehot):
 # - Output is (Bx720) classes for each minute of the day
 class ClockClassificationCNN(nn.Module):
     def __init__(self):
+        super(ClockClassificationCNN, self).__init__()
+        self.net = nn.Sequential(
             # Bx1x224x224 -> Bx16x112x112
             nn.Conv2d(1, 16, kernel_size=3, stride=1, padding=1),
             nn.ReLU(),
@@ -48,6 +50,10 @@ class ClockClassificationCNN(nn.Module):
 
 
 def predict(images):
+    # Images come in as (Bx3x448x448) in range [0..1]
+    # Preprocess images to (Bx1x224x224)
+    images = preprocess_images(images)
+
     # Use GPU if available
     device = torch.device("cuda" if images.is_cuda else "cpu")
 
@@ -57,9 +63,6 @@ def predict(images):
     model.load_state_dict(torch.load(
         "clock_model.pt", map_location=torch.device(device)))
 
-    # Preprocess images
-    images = preprocess_images(images)
-
     # Predict time with model
     model.eval()
     with torch.no_grad():
@@ -68,7 +71,7 @@ def predict(images):
     # Convert output to label
     predicted_times = onehot_to_label(predicted_times)
 
-    # Return predicted times
+    # Return predicted times (Bx2)
     return predicted_times
 
 
@@ -77,7 +80,8 @@ if __name__ == "__main__":
     images = torchio.read_image("clocks_dataset/train/0000.png")
     real_time = open("clocks_dataset/train/0000.txt", "r").read()
 
-    # Predict time
+    # Predict time with (Bx3x448x448) images in range [0..1]
     predicted_time = predict(images.unsqueeze(0) / 255.0)
+    print(predicted_time.shape)
     print(predicted_time)
     print(real_time)
